@@ -2,6 +2,4 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Η αρχική σελίδα (/) εξυπηρετείται από το portal Filament panel (login στο /login).

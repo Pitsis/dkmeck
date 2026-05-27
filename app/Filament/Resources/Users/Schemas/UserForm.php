@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Filament\Resources\Users\Schemas;
+
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Hash;
+
+class UserForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make()
+                    ->columns(2)
+                    ->components([
+                        TextInput::make('name')
+                            ->label('Όνομα')
+                            ->required()
+                            ->maxLength(255),
+
+                        TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+
+                        TextInput::make('password')
+                            ->label('Κωδικός')
+                            ->password()
+                            ->revealable()
+                            ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->required(fn (string $operation): bool => $operation === 'create')
+                            ->maxLength(255),
+
+                        Select::make('roles')
+                            ->label('Ρόλοι')
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->required(),
+                    ]),
+            ]);
+    }
+}
